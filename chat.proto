@@ -1,6 +1,18 @@
 syntax = "proto3"; // 使用版本 3
 
-package com.weiyu.chat; // Java 包名
+// 1.这是给 Protobuf 编译器看的（逻辑分类）
+// 在前端生成 JS 时，消息会叫 com.weiyu.chat.ChatMessage
+package com.weiyu.chat; 
+
+// =======================================================
+// 2.【关键】这是给 Java 生成器看的（物理路径）
+// 哪怕上面写的是 com.weiyu.chat，生成的 Java 文件依然会乖乖
+// 跑到 com.example.project.entity.proto 包下面去！
+// =======================================================
+option java_package = "com.cloud.ctr.entity.proto";
+
+// 3.开启多文件（之前讲过的）
+option java_multiple_files = true;
 
 // 1. 定义消息结构
 message ChatMessage {
