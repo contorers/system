@@ -9,7 +9,7 @@ package com.weiyu.chat;
 // 哪怕上面写的是 com.weiyu.chat，生成的 Java 文件依然会乖乖
 // 跑到 com.example.project.entity.proto 包下面去！
 // =======================================================
-option java_package = "com.cloud.ctr.entity.proto";
+option java_package = "com.ctr.cloud.proto";
 
 // 3.开启多文件（之前讲过的）
 option java_multiple_files = true;
