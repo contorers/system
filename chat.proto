@@ -1,33 +1,42 @@
-syntax = "proto3"; // 使用版本 3
+syntax = "proto3";
+package com.weiyu.chat;
 
-// 1.这是给 Protobuf 编译器看的（逻辑分类）
-// 在前端生成 JS 时，消息会叫 com.weiyu.chat.ChatMessage
-package com.weiyu.chat; 
-
-// =======================================================
-// 2.【关键】这是给 Java 生成器看的（物理路径）
-// 哪怕上面写的是 com.weiyu.chat，生成的 Java 文件依然会乖乖
-// 跑到 com.example.project.entity.proto 包下面去！
-// =======================================================
 option java_package = "com.ctr.cloud.proto";
-
-// 3.开启多文件（之前讲过的）
 option java_multiple_files = true;
 
-// 1. 定义消息结构
+// 聊天消息模型
 message ChatMessage {
-  string id = 1;           // 这里的 1, 2, 3 是字段的唯一编号，不是值！
-  string roomId = 2;
-  string senderId = 3;
-  string content = 4;
-  int64 createTime = 5;    // int64 对应 Java Long
-  
-  // 枚举类型
+  // --- 基础信息 ---
+  string id = 1;           // 消息唯一ID
+
+  //定义的枚举
+  RoleType roleType = 2;   // 角色类型 (普通用户/管理员/系统)
+
+  string roomId = 3;       // 房间/群聊ID
+  string senderId = 4;     // 发送者ID
+  int64 createTime = 5;    // 发送时间戳
+
+  // --- 定义枚举 ---
   enum MsgType {
-    TEXT = 0;
-    IMAGE = 1;
+    TEXT = 0;       // 文本
+    IMAGE = 1;      // 图片
+    AUDIO = 2;      // 语音
+    VIDEO = 3;      // 视频
+    FILE = 4;       // 文件
+    SYSTEM = 9;     // 系统通知 (如: "撤回了一条消息" 或 "加入群聊")
   }
-  MsgType type = 6;
+
+  enum RoleType {
+    USER = 0;     // 普通用户
+    ADMIN = 1;    // 管理员/群主
+    SYSTEM_SENDER = 2;   // 系统发送者 (防止和 MsgType.SYSTEM 混淆，改了个名)
+    CS = 3;       // 客服 (Customer Service)
+  }
+
+  // --- 关键字段 ---
+  MsgType type = 6;      // 消息类型
+  string content = 7;    // 消息内容
+  map<string, string> properties = 8; // 扩展信息
 }
 
 // 外层信封
@@ -36,7 +45,8 @@ message NetPacket {
     CHAT = 0;
     HEARTBEAT = 1;
     LOGIN = 2;
+    ACK = 3;
   }
-  PacketType type = 1; // 先读这个，知道是什么类型
-  bytes data = 2;      // 这里面存真正的 ChatMessage 的二进制数据
+  PacketType type = 1;
+  bytes data = 2;
 }
