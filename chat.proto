@@ -6,48 +6,41 @@ option java_multiple_files = true;
 
 message ChatMessage {
   // --- 基础信息 ---
-  string id = 1;           
-  
+  string id = 1;
+
   // 角色：ADMIN, USER, SYSTEM
-  // 建议这里还是保留枚举，或者你也改成 string roleType = 2;
-  RoleType roleType = 2;   
-  
+  // 约定值: 1, "user", ...
+  int32 roleType = 2;
+
   string roomId = 3;       // 房间ID (仅当 pushType="ROOM" 时使用)
   string senderId = 4;     // 发送者ID
-  int64 createTime = 5;    
+  int64 createTime = 5;
 
   enum MsgType {
-    TEXT = 0;       
-    IMAGE = 1;      
-    AUDIO = 2;      
-    VIDEO = 3;      
-    FILE = 4;       
-    SYSTEM = 9;     
-  }
-
-  enum RoleType {
-    USER = 0;     
-    ADMIN = 1;    
-    SYSTEM_SENDER = 2;   
-    CS = 3;       
+    TEXT = 0;
+    IMAGE = 1;
+    AUDIO = 2;
+    VIDEO = 3;
+    FILE = 4;
+    SYSTEM = 9;
   }
 
   // --- 关键字段 ---
-  MsgType type = 6;      
-  string content = 7;    
-  map<string, string> properties = 8; 
+  MsgType type = 6;
+  string content = 7;
+  map<string, string> properties = 8;
 
   // --- 【路由核心】 ---
-  
+
   // 1. 推送类型 (自定义字符串)
   // 约定值: "ROOM", "USER", "IP", "DEVICE", "ALL" ...
-  string pushType = 9;  
+  string pushType = 9;
 
   // 2. 推送目标 (通用字段)
   // 如果 pushType="USER", 这里填 userId
   // 如果 pushType="IP", 这里填 ip地址
   // 如果 pushType="ROOM", 这里可以留空(读roomId)，也可以填roomId
-  string targetId = 10; 
+  string targetId = 10;
 }
 
 message NetPacket {
