@@ -4,42 +4,52 @@ package com.weiyu.chat;
 option java_package = "com.ctr.cloud.proto";
 option java_multiple_files = true;
 
-// 聊天消息模型
 message ChatMessage {
   // --- 基础信息 ---
-  string id = 1;           // 消息唯一ID
-
-  //定义的枚举
-  RoleType roleType = 2;   // 角色类型 (普通用户/管理员/系统)
-
-  string roomId = 3;       // 房间/群聊ID
+  string id = 1;           
+  
+  // 角色：ADMIN, USER, SYSTEM
+  // 建议这里还是保留枚举，或者你也改成 string roleType = 2;
+  RoleType roleType = 2;   
+  
+  string roomId = 3;       // 房间ID (仅当 pushType="ROOM" 时使用)
   string senderId = 4;     // 发送者ID
-  int64 createTime = 5;    // 发送时间戳
+  int64 createTime = 5;    
 
-  // --- 定义枚举 ---
   enum MsgType {
-    TEXT = 0;       // 文本
-    IMAGE = 1;      // 图片
-    AUDIO = 2;      // 语音
-    VIDEO = 3;      // 视频
-    FILE = 4;       // 文件
-    SYSTEM = 9;     // 系统通知 (如: "撤回了一条消息" 或 "加入群聊")
+    TEXT = 0;       
+    IMAGE = 1;      
+    AUDIO = 2;      
+    VIDEO = 3;      
+    FILE = 4;       
+    SYSTEM = 9;     
   }
 
   enum RoleType {
-    USER = 0;     // 普通用户
-    ADMIN = 1;    // 管理员/群主
-    SYSTEM_SENDER = 2;   // 系统发送者 (防止和 MsgType.SYSTEM 混淆，改了个名)
-    CS = 3;       // 客服 (Customer Service)
+    USER = 0;     
+    ADMIN = 1;    
+    SYSTEM_SENDER = 2;   
+    CS = 3;       
   }
 
   // --- 关键字段 ---
-  MsgType type = 6;      // 消息类型
-  string content = 7;    // 消息内容
-  map<string, string> properties = 8; // 扩展信息
+  MsgType type = 6;      
+  string content = 7;    
+  map<string, string> properties = 8; 
+
+  // --- 【路由核心】 ---
+  
+  // 1. 推送类型 (自定义字符串)
+  // 约定值: "ROOM", "USER", "IP", "DEVICE", "ALL" ...
+  string pushType = 9;  
+
+  // 2. 推送目标 (通用字段)
+  // 如果 pushType="USER", 这里填 userId
+  // 如果 pushType="IP", 这里填 ip地址
+  // 如果 pushType="ROOM", 这里可以留空(读roomId)，也可以填roomId
+  string targetId = 10; 
 }
 
-// 外层信封
 message NetPacket {
   enum PacketType {
     CHAT = 0;
