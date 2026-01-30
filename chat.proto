@@ -6,15 +6,16 @@ option java_multiple_files = true;
 
 message ChatMessage {
   // --- 基础信息 ---
-  string id = 1;
+  int64 id = 1;
 
   // 角色：ADMIN, USER, SYSTEM
-  // 约定值: 1, "user", ...
   int32 roleType = 2;
 
-  string roomId = 3;       // 房间ID (仅当 pushType="ROOM" 时使用)
-  string senderId = 4;     // 发送者ID
-  int64 createTime = 5;
+  // 业务字段：存储时必须区分是 房间 还是 个人
+  int64 roomId = 3;
+  int64 senderId = 4;
+  int64 receiverId = 5;
+  int64 createTime = 6;
 
   enum MsgType {
     TEXT = 0;
@@ -25,22 +26,14 @@ message ChatMessage {
     SYSTEM = 9;
   }
 
-  // --- 关键字段 ---
-  MsgType type = 6;
-  string content = 7;
-  map<string, string> properties = 8;
+  // --- 内容 ---
+  MsgType type = 7;
+  string content = 8;
+  map<string, string> properties = 9;
 
-  // --- 【路由核心】 ---
-
-  // 1. 推送类型 (自定义字符串)
-  // 约定值: "ROOM", "USER", "IP", "DEVICE", "ALL" ...
-  string pushType = 9;
-
-  // 2. 推送目标 (通用字段)
-  // 如果 pushType="USER", 这里填 userId
-  // 如果 pushType="IP", 这里填 ip地址
-  // 如果 pushType="ROOM", 这里可以留空(读roomId)，也可以填roomId
-  string targetId = 10;
+  // --- 业务指令 ---
+  // 例如：FRIEND_REQUEST, GROUP_CHAT, WITHDRAW(撤回)
+  int32 pushType = 10;
 }
 
 message NetPacket {
@@ -51,5 +44,12 @@ message NetPacket {
     ACK = 3;
   }
   PacketType type = 1;
-  bytes data = 2;
+
+  // --- 路由层 (信封信息) ---
+  // 决定了 Consumer 怎么投递这个包
+  int64 targetId = 4;
+
+  // --- 载荷 ---
+  // 里面是 ChatMessage 的二进制，或者 心跳包体，或者 ACK 包体
+  bytes data = 5;
 }
