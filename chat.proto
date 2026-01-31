@@ -38,10 +38,16 @@ message ChatMessage {
 
 message NetPacket {
   enum PacketType {
-    CHAT = 0;
-    HEARTBEAT = 1;
-    LOGIN = 2;
-    ACK = 3;
+    UNKNOWN = 0;
+
+    // 2. 业务位：从 1 开始
+    CHAT = 1;
+    HEARTBEAT = 2;
+    LOGIN = 3;
+    ACK = 4;
+
+    // 3. 未来扩展：给你的 AI 服务预留
+    AI_CHAT = 5;
   }
   PacketType type = 1;
 
