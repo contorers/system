@@ -53,7 +53,7 @@ message NetPacket {
 
   // --- 路由层 (信封信息) ---
   // 决定了 Consumer 怎么投递这个包
-  int64 targetId = 2;
+  repeated int64 targetIds = 2;
 
   // --- 载荷 ---
   // 里面是 ChatMessage 的二进制，或者 心跳包体，或者 ACK 包体
