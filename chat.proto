@@ -28,7 +28,7 @@ message ChatMessage {
 
   // --- 内容 ---
   MsgType type = 7;
-  byte content = 8;
+  bytes content = 8;
   map<string, string> properties = 9;
 
   // --- 业务指令 ---
