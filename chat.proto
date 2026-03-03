@@ -34,7 +34,12 @@ message ChatMessage {
   // --- 业务指令 ---
   // 例如：FRIEND_REQUEST, GROUP_CHAT, WITHDRAW(撤回)
   int32 pushType = 10;
-  bytes signature=11;
+}
+message SignedPayload {
+  // 这里存放 ChatMessage 序列化后的纯净二进制流
+  bytes payload = 1;
+  // 对上面 payload 字节流的数字签名
+  bytes signature = 2;
 }
 
 message NetPacket {
@@ -56,7 +61,9 @@ message NetPacket {
   // 决定了 Consumer 怎么投递这个包
   repeated int64 targetIds = 2;
 
+  // 首字节压缩标记
+  bool isCompressed = 3;
   // --- 载荷 ---
   // 里面是 ChatMessage 的二进制，或者 心跳包体，或者 ACK 包体
-  bytes data = 3;
+  bytes data = 4;
 }
