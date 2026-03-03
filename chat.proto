@@ -66,4 +66,8 @@ message NetPacket {
   // --- 载荷 ---
   // 里面是 ChatMessage 的二进制，或者 心跳包体，或者 ACK 包体
   bytes data = 4;
+
+  // 新增：后端收到后，打上的全局唯一 ID。
+  // 因为它在信封外层，后端怎么改都不会破坏 data 里面的签名！
+  int64 serverMsgId = 5;
 }
