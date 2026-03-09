@@ -34,6 +34,7 @@ message ChatMessage {
   // --- 业务指令 ---
   // 例如：FRIEND_REQUEST, GROUP_CHAT, WITHDRAW(撤回)
   int32 pushType = 10;
+  int32 keyLevel = 11;
 }
 message SignedPayload {
   // 这里存放 ChatMessage 序列化后的纯净二进制流
